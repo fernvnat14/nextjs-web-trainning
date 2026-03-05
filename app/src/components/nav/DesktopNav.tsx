@@ -1,28 +1,31 @@
-import { navItems, type NavKey } from './nav';
+import { navItems } from './nav';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-type DesktopNavProps = {
-  active: NavKey;
-  onNav: (key: NavKey) => void;
-};
+export function DesktopNav() {
+  const pathname = usePathname();
 
-export function DesktopNav({ active, onNav }: DesktopNavProps) {
-  const desktopClass = (name: NavKey) =>
-    name === active
+  const isActive = (href: string) => {
+    if (href === '/' && pathname !== '/') return false;
+    return pathname.startsWith(href);
+  };
+
+  const desktopClass = (href: string) =>
+    isActive(href)
       ? 'text-sky-600 font-semibold border-b-2 border-sky-600 pb-1'
       : 'text-slate-700 hover:text-sky-600 transition-colors font-medium';
 
   return (
     <div className="hidden md:flex items-center space-x-8">
       {navItems.map((item) => (
-        <a
+        <Link
           key={item.key}
           href={item.href}
-          onClick={() => onNav(item.key)}
-          className={desktopClass(item.key)}
-          aria-current={active === item.key ? 'page' : undefined}
+          className={desktopClass(item.href)}
+          aria-current={isActive(item.href) ? 'page' : undefined}
         >
           {item.label}
-        </a>
+        </Link>
       ))}
     </div>
   );

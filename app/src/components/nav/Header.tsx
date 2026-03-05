@@ -1,27 +1,18 @@
 import { useState } from 'react';
 import { Plane } from 'lucide-react';
-import { type NavKey } from './nav';
 import { DesktopNav } from './DesktopNav';
+import Link from 'next/link';
 
-type HeaderProps = {
-    onLogoClick?: () => void;
-};
-
-export default function Header({ onLogoClick }: HeaderProps) {
+export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [active, setActive] = useState<NavKey>('checkin');
-    const handleNav = (name: NavKey) => {
-        setActive(name);
-        setIsMenuOpen(false);
-    };
 
     return (
         <header className="bg-white shadow-sm sticky top-0 z-50 border-b border-sky-100">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16 sm:h-20">
-                    <button
+                    <Link
+                        href="/"
                         aria-label="Qoomlee Home"
-                        onClick={onLogoClick}
                         className="flex items-center space-x-2 sm:space-x-3 group cursor-pointer"
                     >
                         <div className="relative">
@@ -32,9 +23,9 @@ export default function Header({ onLogoClick }: HeaderProps) {
                             <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Qoomlee</h1>
                             <p className="text-xs text-sky-600 -mt-1">Airline</p>
                         </div>
-                    </button>
+                    </Link>
 
-                    <DesktopNav active={active} onNav={handleNav} />
+                    <DesktopNav />
 
                     <div className="md:hidden">
                         <button
@@ -57,9 +48,8 @@ export default function Header({ onLogoClick }: HeaderProps) {
 
                 {isMenuOpen && (
                     <div className="md:hidden py-3 border-t border-slate-200">
-                        <a
-                            href="#profile"
-                            className="flex items-center space-x-3 p-2 rounded hover:bg-slate-50"
+                        <button
+                            className="flex items-center space-x-3 p-2 rounded hover:bg-slate-50 w-full text-left"
                         >
                             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-700 font-semibold">
                                 P
@@ -68,7 +58,7 @@ export default function Header({ onLogoClick }: HeaderProps) {
                                 <span className="text-sm font-medium text-slate-800">Profile</span>
                                 <span className="text-xs text-slate-500">View account</span>
                             </div>
-                        </a>
+                        </button>
                     </div>
                 )}
             </nav>

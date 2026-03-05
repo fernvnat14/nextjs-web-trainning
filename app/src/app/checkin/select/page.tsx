@@ -1,15 +1,25 @@
-import { useState, useCallback, memo } from 'react';
-import PassengerCard from '../components/Passenger/PassengerCard';
-import { Passenger } from '../types/checkin';
+"use client";
 
-export interface PassengerSelectProps {
-  passengers: Passenger[];
-  onNext: (selected: Passenger[]) => void;
-  onBack: () => void;
-}
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import PassengerCard from '../../../components/Passenger/PassengerCard';
+import { useCheckin } from '../../../context/CheckinContext';
 
-const PassengerSelect = ({ passengers, onNext, onBack }: PassengerSelectProps) => {
-  const [selected, setSelected] = useState<Record<number, boolean>>({});
+export default function PassengerSelectPage() {
+  const router = useRouter();
+  const { booking, selectedPassengers, setSelectedPassengers } = useCheckin();
+  const passengers = booking?.passengers || [];
+
+  const [selected, setSelected] = useState<Record<number, boolean>>(() => {
+    // Initialize with previously selected passengers if available
+    const initialSelected: Record<number, boolean> = {};
+    passengers.forEach((p, i) => {
+      if (selectedPassengers.some(sp => sp.firstName === p.firstName && sp.lastName === p.lastName)) {
+        initialSelected[i] = true;
+      }
+    });
+    return initialSelected;
+  });
 
   const anySelected = Object.values(selected).some(Boolean);
   const allSelected = passengers.length > 0 && passengers.every((_, i) => selected[i]);
@@ -27,12 +37,32 @@ const PassengerSelect = ({ passengers, onNext, onBack }: PassengerSelectProps) =
   }, []);
 
   const handleNext = useCallback(() => {
-    onNext(passengers.filter((_, i) => !!selected[i]));
-  }, [onNext, passengers, selected]);
+    const nextSelected = passengers.filter((_, i) => !!selected[i]);
+    setSelectedPassengers(nextSelected);
+
+    // If no passengers need details, skip to DG page
+    if (nextSelected.every(p => p.paxType === 'INF')) {
+      router.push('/checkin/dg');
+    } else {
+      router.push('/checkin/details');
+    }
+  }, [router, passengers, selected, setSelectedPassengers]);
+
+  const handleBack = useCallback(() => {
+    router.push('/checkin');
+  }, [router]);
+
+  // Handle case where booking is not present (redirect handled by layout or component)
+  if (!booking) {
+    if (typeof window !== 'undefined') {
+      router.replace('/checkin');
+    }
+    return null;
+  }
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden mb-4">
+      <div className="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden mb-4 relative z-10 mx-auto max-w-3xl lg:mt-8">
         <div className="px-5 pt-5 pb-4 bg-gradient-to-b from-slate-50/50 to-white border-b border-slate-100">
           <h3 className="text-xl font-bold text-slate-900 tracking-tight">Select Passengers</h3>
           <p className="text-sm text-slate-600 mt-1.5">Choose passengers for check-in</p>
@@ -79,17 +109,16 @@ const PassengerSelect = ({ passengers, onNext, onBack }: PassengerSelectProps) =
       </div>
 
       {/* Sticky action buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-30 safe-area-inset-bottom">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 safe-area-inset-bottom">
         <div className="max-w-3xl mx-auto px-4 py-3 flex gap-3">
-          {onBack && (
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex-1 inline-flex items-center justify-center rounded-lg border-2 border-slate-300 px-4 py-3.5 text-base font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.98] touch-manipulation"
-            >
-              Back
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleBack}
+            className="flex-1 inline-flex items-center justify-center rounded-lg border-2 border-slate-300 px-4 py-3.5 text-base font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.98] touch-manipulation"
+          >
+            Back
+          </button>
+
           <button
             type="button"
             disabled={!anySelected}
@@ -102,6 +131,4 @@ const PassengerSelect = ({ passengers, onNext, onBack }: PassengerSelectProps) =
       </div>
     </>
   );
-};
-
-export default memo(PassengerSelect);
+}
