@@ -226,6 +226,40 @@ const mockDb: Record<string, BookingDetails> = {
         documentNumber: 'AX3456788'
       }
     ]
+  },
+  'NOCHECKIN': {
+    checkinKey: 'CHK-NOCHECKIN-001',
+    isEligible: false,
+    bookingRef: 'NOCHECKIN',
+    journeys: [
+      {
+        departure: {
+          airport: 'BKK',
+          time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          terminal: '1'
+        },
+        arrival: {
+          airport: 'SIN',
+          time: new Date(Date.now() + 27 * 60 * 60 * 1000).toISOString(),
+          terminal: '1'
+        },
+        flightNumber: 'QL999',
+        segmentStatus: 'CHECKIN_CLOSED',
+        marketingCarrier: 'QL',
+        operatingCarrier: 'QL',
+        terminal: '1',
+        gate: 'TBD'
+      },
+    ],
+    passengers: [
+      {
+        id: '999e4567-e89b-12d3-a456-426614174000',
+        firstName: 'John',
+        lastName: 'Doe',
+        paxType: PaxType.ADT,
+        checkedIn: false,
+      }
+    ]
   }
 };
 

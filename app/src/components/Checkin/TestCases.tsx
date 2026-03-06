@@ -16,6 +16,7 @@ export const TestCases = ({ setLastName, setBookingRef }: TestCasesProps) => {
     { name: 'Case 1: Standard Check-in', lastName: 'Huum', bookingRef: 'ABC123' },
     { name: 'Case 2: Different Passenger', lastName: 'Smith', bookingRef: 'XYZ789' },
     { name: 'Case 3: Long Booking Ref', lastName: 'Johnson', bookingRef: 'LONG123456' },
+    { name: 'Case 4: Not Eligible', lastName: 'Doe', bookingRef: 'NOCHECKIN' },
   ];
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
@@ -35,11 +36,10 @@ export const TestCases = ({ setLastName, setBookingRef }: TestCasesProps) => {
         <button
           key={index}
           onClick={() => handleSelect(index)}
-          className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
-            selectedIndex === index
+          className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${selectedIndex === index
               ? 'bg-amber-500 text-white hover:bg-amber-600'
               : 'bg-amber-100 text-amber-800 hover:bg-amber-200'
-          }`}
+            }`}
           title={testCase.name}
         >
           {index + 1}

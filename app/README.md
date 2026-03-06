@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# Qoomlee Next.js Check-in App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Next.js (App Router) migration of the Qoomlee Airline Check-in flow. It features responsive, modern designs that map the complete user flow from finding a booking to receiving a boarding pass.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 18+  
+- [Bun](https://bun.sh/) (recommended for faster package management and script execution)
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Install dependencies** (if not already installed):
+   ```bash
+   bun install
+   ```
+2. **Run the development server**:
+   ```bash
+   bun run dev
+   ```
+3. Open [http://localhost:3000](http://localhost:3000) in your browser. The app will automatically redirect to the `/checkin` flow.
 
-## Expanding the ESLint configuration
+## Test Cases 🧪
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To test the application without a real backend, several mock bookings are provided. You can manually type these into the Check-in form or use the **"Test Cases"** quick-fill buttons natively built into the UI:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+*   **Case 1: Standard Check-in (Multi-Passenger Mix)**
+    *   **Last Name:** `Huum`
+    *   **Booking Ref (PNR):** `ABC123`
+    *   *Details:* Contains two passengers, testing both checked-in states and fresh check-in states.
+*   **Case 2: Different Passenger (Single Passenger)**
+    *   **Last Name:** `Smith`
+    *   **Booking Ref (PNR):** `XYZ789`
+    *   *Details:* A standard single passenger US flight checkout.
+*   **Case 3: Long Booking Reference**
+    *   **Last Name:** `Johnson`
+    *   **Booking Ref (PNR):** `LONG123456`
+    *   *Details:* Tests the UI constraints and interactions with non-standard PNR lengths.
+*   **Case 4: Not Eligible (Ineligible Booking)**
+    *   **Last Name:** `Doe`
+    *   **Booking Ref (PNR):** `NOCHECKIN`
+    *   *Details:* Demonstrates the error handling and modal popup functionality for flights closed to online check-ins.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Similarly, on the **Passenger Details** page, you'll find quick-fill buttons to test different International formats for nationality and phone validation (e.g., TH, US, SG).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## App Architecture & Routing
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This app fully embraces the **Next.js App Router**:
+*   `/checkin` -> Initial booking retrieval screen.
+*   `/checkin/select` -> Passenger selection interface.
+*   `/checkin/details` -> Mandatory safety forms and ID info.
+*   `/checkin/dg` -> Dangerous Goods declaration logic.
+*   `/checkin/boarding` -> Final interactive Boarding Pass screen with Apple Wallet placeholder UI.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Global state management is driven cleanly decoupled via the `src/context/CheckinContext.tsx` provider wrapping the primary App layout.
