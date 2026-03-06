@@ -35,7 +35,7 @@ export default function CheckinPage() {
             <Header />
 
             {/* Hero Banner matched to desktop-001-checkin.png */}
-            <div className="bg-[#0ba4df] text-white py-10 sm:py-16 px-4">
+            <div className="bg-gradient-to-r from-[#6367FF] via-[#8494FF] to-[#C9BEFF] text-white py-10 sm:py-16 px-4">
                 <div className="max-w-7xl mx-auto text-center">
                     <h1 className="text-3xl sm:text-4xl md:text-[44px] font-bold mb-3 sm:mb-4 tracking-tight">Online Check-in</h1>
                     <p className="text-lg sm:text-xl md:text-2xl font-medium text-white/95 mb-1 sm:mb-2 tracking-wide">Fly Smart. Fly Qoomlee.</p>
